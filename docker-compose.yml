@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  channel-builder:
+    build: .
+    container_name: channel-builder
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./cache:/app/cache
+      - ./commercials_local:/app/commercials_local
+    environment:
+      - DATA_DIR=/app/data
+      - CACHE_DIR=/app/cache
+      - LOCAL_COMMERCIALS_DIR=/app/commercials_local

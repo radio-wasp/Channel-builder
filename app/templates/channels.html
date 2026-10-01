@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Channels — ChannelBuilder{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-white">Channels</h1>
+            <p class="text-slate-400 text-sm mt-1">Manage virtual 24/7 linear channels for your IPTV server.</p>
+        </div>
+        <a href="/channels/new" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg text-sm font-semibold shadow-lg shadow-blue-500/20 transition">
+            <i class="fa-solid fa-plus"></i>
+            <span>Create Channel</span>
+        </a>
+    </div>
+
+    {% if channels %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for ch in channels %}
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 flex flex-col justify-between shadow-lg hover:border-slate-600 transition">
+            <div class="space-y-4">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        {% if ch.logo_url %}
+                        <img src="{{ ch.logo_url }}" class="w-12 h-12 rounded-lg object-cover bg-slate-900 border border-slate-700">
+                        {% else %}
+                        <div class="w-12 h-12 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold border border-blue-500/30">
+                            #{{ ch.number }}
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h2 class="text-lg font-bold text-white leading-tight">{{ ch.name }}</h2>
+                            <p class="text-xs text-blue-400 font-mono">Channel #{{ ch.number }}</p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-2xs font-bold uppercase tracking-wider bg-slate-700 text-slate-300">
+                        {{ ch.content_type }}
+                    </span>
+                </div>
+
+                <div class="space-y-2 text-xs text-slate-300 bg-slate-900/60 rounded-lg p-3 border border-slate-700/50">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400">Jellyfin Items:</span>
+                        <span class="font-semibold text-white">{{ ch.selected_items|length }} items</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-400">Commercial Break:</span>
+                        <span class="font-semibold text-emerald-400">{{ ch.break_duration_seconds }}s (~2 mins)</span>
+                    </div>
+                    <div class="flex items-center justify-between truncate">
+                        <span class="text-slate-400">Commercial Source:</span>
+                        <span class="font-mono text-slate-200 text-2xs truncate max-w-[150px]">{{ ch.commercial_source_value }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-5 border-t border-slate-700/60 mt-4 flex items-center justify-between gap-2">
+                <a href="/channels/{{ ch.id }}" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2 rounded-lg transition">
+                    View Schedule
+                </a>
+                <a href="/channels/{{ ch.id }}/edit" class="p-2 rounded-lg bg-slate-700/60 hover:bg-slate-700 text-slate-300 hover:text-white transition text-xs">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <form method="POST" action="/channels/{{ ch.id }}/delete" onsubmit="return confirm('Are you sure you want to delete Channel #{{ ch.number }}?');">
+                    <button type="submit" class="p-2 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 transition text-xs">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-slate-800/60 border border-slate-700/80 rounded-xl p-12 text-center text-slate-400 space-y-4">
+        <i class="fa-solid fa-tv text-5xl text-slate-600"></i>
+        <h3 class="text-lg font-bold text-white">No Channels Created</h3>
+        <p class="text-sm max-w-md mx-auto">Create your first 24-hour channel by choosing content from your Jellyfin library and YouTube commercial sources.</p>
+        <a href="/channels/new" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition shadow-lg shadow-blue-500/20">
+            Create Channel Now
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
